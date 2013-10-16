@@ -26,22 +26,44 @@ namespace LibBinaryFile
             //mCurAtUnit = 0;
         }
 
-        public int ReadUnitAt(long UnitIndex)
+        /*public int ReadUnitAt(long UnitIndex)
         {
             mStream.Seek(UnitIndex * mUnitLenAsByte, SeekOrigin.Begin);
             int red = mStream.Read(mByteBuf, 0, mUnitLenAsByte);
             //mCurAtUnit = (ulong)(offUnits + 1);
             return red;
+        }*/
+
+        public List<byte[]> ReadTillEnd(long BegUnitIndex)
+        {
+            List<byte[]> retval = new List<byte[]>();
+            int red = 100;
+            long curUnitIndex = BegUnitIndex;
+            while (red >= mUnitLenAsByte)
+            {
+                byte[] dataSpan = new byte[mUnitLenAsByte];
+                    
+                mStream.Seek(curUnitIndex * mUnitLenAsByte, SeekOrigin.Begin);
+                red = mStream.Read(dataSpan, 0, mUnitLenAsByte);
+                
+                if (red == mUnitLenAsByte)
+                {
+                    retval.Add(dataSpan);
+                    curUnitIndex++;
+                }
+            }
+
+            return retval;
         }
 
-        public ulong GetUInt64InBuf(int begat)
+        public ulong GetUInt64InBuf(int begat, byte[] source)
         {
-            return BitConverter.ToUInt64(mByteBuf, begat);
+            return BitConverter.ToUInt64(source, begat);
         }
 
-        public double GetDoubleInBuf(int begat)
+        public double GetDoubleInBuf(int begat, byte[] source)
         {
-            return BitConverter.ToDouble(mByteBuf, begat);
+            return BitConverter.ToDouble(source, begat);
         }
 
         public int ReadUnitBy()
